@@ -1,49 +1,26 @@
-require('babel-polyfill');
-require('whatwg-fetch');
-
+// webpack v4 exercise by Margarita Obraztsova
 const path = require('path');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+
+// update from 23.12.2018
+const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
-  entry: [ 
-    'babel-polyfill',
-    'whatwg-fetch',
-    './js/main.js' 
-  ],
+  entry: { main: './src/index.js' },
   output: {
-    path: path.resolve(__dirname, ''),
-    filename: 'main.bundle.js'
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'main.js'
   },
-  target: 'node',
+  target: 'node', // update from 23.12.2018
+  externals: [nodeExternals()], // update from 23.12.2018
   module: {
     rules: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader'
+          loader: "babel-loader"
         }
-      },
-      {
-        test: /\.scss$/,
-        use: [ 'style-loader', 
-        MiniCssExtractPlugin.loader, 
-        {
-          loader: 'css-loader',
-          options: {
-            url: false,
-          },
-        },
-        'postcss-loader',
-        'sass-loader']
       }
     ]
-  },
-  plugins: [
-    new CleanWebpackPlugin('dist', {} ),
-    new MiniCssExtractPlugin({
-      filename: 'style.bundle.css',
-    })
-  ]
+  }
 };
