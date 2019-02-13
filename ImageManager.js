@@ -13,10 +13,10 @@ function ImageManager(placeholderDataUri) {
 _p = ImageManager.prototype;
 
 /****
- * load - function - public method used for preparing image queue and firing _loadItem method on each of images
- * @param - images - object with key-value pairs 
- * @param - onDone - function informing about load success,
- * @param - onProgress -function informin about load progress or fail
+ * load - public method used for preparing image queue and firing _loadItem method on each of images
+ * @param images - object with key-value pairs 
+ * @param onDone - function informing about load success,
+ * @param onProgress -function informing about load progress or fail
 */
 
 _p.load = function(images, onDone, onProgress){
@@ -27,9 +27,9 @@ _p.load = function(images, onDone, onProgress){
             path: images[im]
         });
     }
-    if (queue.length == 0) {
-        onProgress && onProgress(0, 0, null, null, true);
-        onDone && onDone();
+    if (queue.length === 0) {
+        onProgress && onProgress(0, 0, null, null, true); // if onProgress exists do it
+        onDone && onDone(); // if onDone exist do it
         return;
     }
 
@@ -44,12 +44,17 @@ _p.load = function(images, onDone, onProgress){
 };
 
 /****
- * 
- * 
+ * loadItem - private method responsible for loading photo and sending success or loading fail to onItemLoaded
+ * @param queueItem - object representing photo queue,
+ * @param itemCounter - object counting loaded photos,
+ * @param onDone - function informing about load success,
+ * @param onProgress -function informing about load progress or fail
 */
 
 _p._loadItem = function(queueItem, itemCounter, onDone, onProgress) {
-	var self = this;
+    var self = this; 
+    // console.log(self); // reference to ImageManager object
+    
 	var img = new Image();
 	img.onload = function() {
 		self._images[queueItem.key] = img;
@@ -64,27 +69,12 @@ _p._loadItem = function(queueItem, itemCounter, onDone, onProgress) {
 };
 
 /****
- * 
- * 
-*/
-
-_p._onLoadItem = function(queueItem, itemCounter, onDone, onProgress){
-    let self = this;
-    let img = new Image();
-    img._onload = function(){
-        self._images[queueItem.key] = img;
-        self.onItemLoaded(queueItem, itemCounter, onDone, onProgress, true);
-    };
-
-    img.onerror = function(){
-        self._onItemLoaded(queueItem, itemCounter, onDone, onProgress, false);
-    };
-    img.src = queueItem.path;
-};
-
-/****
- * 
- * 
+ * _onItemLoaded - private method responsible for handling results of loading items
+ * @param queueItem - object representing photo queue,
+ * @param itemCounter - number representing photo number from queue
+ * @param onDone - function informing about load success,
+ * @param onProgress -function informing about load progress or fail
+ * @param success - boolean flag indicating success or fail of photoloading
 */
 
 _p._onItemLoaded = function(queueItem, itemCounter, onDone, onProgress, success){
@@ -96,8 +86,8 @@ _p._onItemLoaded = function(queueItem, itemCounter, onDone, onProgress, success)
 };
 
 /****
- * simple function returning loaded image suitable to key
- * @param picture alias 
+ * simple public method returning loaded image suitable to key
+ * @param key - picture alias 
  */
 
 _p.get = function(key){
