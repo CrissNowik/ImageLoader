@@ -6,6 +6,17 @@ window.addEventListener('load', init);
 
 function init() {
     const canvas = initFullScreenCanvas("mainCanvas");
+    const ctx = canvas.getContext("2d");
+    const image = new Image();
+    
+    image.onload = function() {
+        // Ready
+        ctx.drawImage(image, 10, 10);
+    };
+    image.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAm0lEQVRoQ+" +
+            "3YMRWAMBQEwcRT/Cv4nuAhYYtQDQaAyXIFe2aedfk65+zLt1jbiwRiJxKwpBWwlrSClrQClrQKlrSKltUKWtIKW" +
+            "FarYEmraFmtoCWtgGW1Cpa0ipbVClrXf5x9z/LHvzMvEk7diRQsaRUtH3vQklbAsloFS1pFy2oFLWkFLKtVsKRVt" +
+            "KxW0JJWwLJaBUtaRctqBa0X1+W43qGn25cAAAAASUVORK5CYII=";
 
     const imageManager = new ImageManager();
     // object with key: value for load method
