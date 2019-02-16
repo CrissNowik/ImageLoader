@@ -4,6 +4,28 @@ window.addEventListener('load', init);
  * init - public function responsible for initializing new ImageManager class (object), when window object will load (line 1)
  */
 let imageManager;
+let spriteSheet;
+let timer = 0;
+let frameStart = 0;
+let frame = 0;
+const tiles = [
+    [0, 0, 94, 76, 44, 67],
+    [94, 0, 94, 76, 44, 68],
+    [188, 0, 91, 76, 42, 68],
+    [279, 0, 88, 76, 39, 68],
+    [367, 0, 83, 77, 34, 69],
+    [0, 77, 81, 75, 34, 67],
+    [81, 77, 80, 73, 34, 66],
+    [161, 77, 78, 72, 33, 65],
+    [239, 77, 77, 72, 33, 65],
+    [316, 77, 77, 72, 32, 65],
+    [393, 77, 79, 73, 33, 66],
+    [0, 152, 80, 75, 34, 67],
+    [80, 152, 81, 77, 34, 69],
+    [161, 152, 84, 77, 36, 69],
+    [245, 152, 89, 76, 41, 68],
+    [334, 152, 93, 75, 44, 67]
+];
 
 function init() {
     imageManager = new ImageManager();
@@ -16,25 +38,35 @@ function init() {
         "sheet": "img/sheet.png"
     }, onDone, onProgress, onLoaded);
 };
+
 /**
  *onLoaded - function responsible for getting images from imageManager object and drawing received images by drawFrame public method
  */
 function onLoaded() {
     let canvas = initFullScreenCanvas("mainCanvas");
     let ctx = canvas.getContext("2d");
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(0,0, canvas.width, canvas.height);
-    let spriteSheet = new SpriteSheet(imageManager.get("sheet"), [
-        [0, 0, 94, 76, 44, 67],
-        [94, 0, 94, 76, 44, 68],
-        [188, 0, 91, 76, 42, 68],
-        [279, 0, 88, 76, 39, 68]
-    ]);
-
-    spriteSheet.drawFrame(ctx, 1, 200, 200);
+    spriteSheet = new SpriteSheet(imageManager.get("sheet"), tiles);
+    console.log("Animation now!")
+    animate();
 }
-
 setTimeout(onLoaded,2000);
+/**
+ * animate - basic animation function
+ */
+function animate(timestamp) {
+    let canvas = initFullScreenCanvas("mainCanvas");
+    let ctx = canvas.getContext("2d");
+    let now = new Date().getTime();
+    let passed = now - frameStart;
+    if (passed > 60) {
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0,0, 500, 500);
+        frame = (frame + 1)%tiles.length; // increment frame number +1, but no bigger than tiles array length (current++ -- if current>4 ? current=0)
+        spriteSheet.drawFrame(ctx, frame, 200, 200);
+        frameStart = now;
+    }
+    requestAnimationFrame(arguments.callee);
+}
 
 /****
  * onProgress - function responsible for informing about fail/success of loading each photo
@@ -111,3 +143,4 @@ function altImgBackup() {
             "FarYEmraFmtoCWtgGW1Cpa0ipbVClrXf5x9z/LHvzMvEk7diRQsaRUtH3vQklbAsloFS1pFy2oFLWkFLKtVsKRVt" +
             "KxW0JJWwLJaBUtaRctqBa0X1+W43qGn25cAAAAASUVORK5CYII=";
 }
+
