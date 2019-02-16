@@ -35,7 +35,7 @@ function init() {
  * @param success - bool flag 
  */
 
-function onProgress(loaded, total, path, success) {
+function onProgress(loaded, total, key, path, success) {
     if (success) {
         console.log("loaded " + loaded + " from " + total + " pictures");
     } else {
