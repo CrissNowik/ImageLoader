@@ -3,27 +3,16 @@ window.addEventListener('load', init);
 /****
  * init - public function responsible for initializing new ImageManager class (object), when window object will load (line 1)
  */
+let imageManager;
 
 function init() {
-    // const canvas = initFullScreenCanvas("mainCanvas");
-    // const ctx = canvas.getContext("2d");
-    // const image = new Image();
-
-    // image.onload = function() {
-    //     // Ready
-    //     ctx.drawImage(image, 10, 10);
-    // };
-    // image.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAm0lEQVRoQ+" +
-    //         "3YMRWAMBQEwcRT/Cv4nuAhYYtQDQaAyXIFe2aedfk65+zLt1jbiwRiJxKwpBWwlrSClrQClrQKlrSKltUKWtIKW" +
-    //         "FarYEmraFmtoCWtgGW1Cpa0ipbVClrXf5x9z/LHvzMvEk7diRQsaRUtH3vQklbAsloFS1pFy2oFLWkFLKtVsKRVt" +
-    //         "KxW0JJWwLJaBUtaRctqBa0X1+W43qGn25cAAAAASUVORK5CYII=";
-
-    const imageManager = new ImageManager();
+    imageManager = new ImageManager();
     // object with key: value for load method
     imageManager.load({
         "arch-left": "img/arch-left.png",
         "arch-right": "img/arch-right.png",
-        "knight": " img/knight.png"
+        "knight": "img/knight.png",
+        "axe": "img/axe.png"
     }, onDone, onProgress);
 };
 
@@ -39,18 +28,7 @@ function onProgress(loaded, total, key, path, success) {
     if (success) {
         console.log("loaded " + loaded + " from " + total + " pictures");
     } else {
-        const canvas = initFullScreenCanvas("mainCanvas");
-        const ctx = canvas.getContext("2d");
-        const image = new Image();
-
-        image.onload = function() {
-            // Ready
-            ctx.drawImage(image, 10, 10);
-        };
-        image.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAm0lEQVRoQ+" +
-                "3YMRWAMBQEwcRT/Cv4nuAhYYtQDQaAyXIFe2aedfk65+zLt1jbiwRiJxKwpBWwlrSClrQClrQKlrSKltUKWtIKW" +
-                "FarYEmraFmtoCWtgGW1Cpa0ipbVClrXf5x9z/LHvzMvEk7diRQsaRUtH3vQklbAsloFS1pFy2oFLWkFLKtVsKRVt" +
-                "KxW0JJWwLJaBUtaRctqBa0X1+W43qGn25cAAAAASUVORK5CYII=";
+        altImgBackup();
         console.log("Error: Not loaded picture " + path);
     }
 }
@@ -61,6 +39,7 @@ function onProgress(loaded, total, key, path, success) {
 
 function onDone() {
     console.log("All pictures loaded");
+    drawKnight();
 };
 
 /****
@@ -85,4 +64,32 @@ function initFullScreenCanvas(canvasId) {
 function resizeCanvas(canvas) {
     canvas.width = document.width || document.body.clientWidth;
     canvas.height = document.height || document.body.clientHeight;
+}
+
+/****
+ * drawAxe() -  function responsible for drawing axe when loading occurs success
+ */
+function drawKnight() {
+    const canvas = document.getElementById("mainCanvas");
+    const ctx = canvas.getContext("2d");
+    const knight = imageManager.get("knight");
+    ctx.drawImage(knight, 0, 0, 206, 208, 10, 10, 206, 208);
+}
+
+/****
+ * altImgBackup - function responsible for drawing alternative image when loading of some picture will error
+ */
+function altImgBackup() {
+    const canvas = initFullScreenCanvas("mainCanvas");
+    const ctx = canvas.getContext("2d");
+    const image = new Image();
+
+    image.onload = function() {
+        // Ready
+        ctx.drawImage(image, 10, 10);
+    };
+    image.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAm0lEQVRoQ+" +
+            "3YMRWAMBQEwcRT/Cv4nuAhYYtQDQaAyXIFe2aedfk65+zLt1jbiwRiJxKwpBWwlrSClrQClrQKlrSKltUKWtIKW" +
+            "FarYEmraFmtoCWtgGW1Cpa0ipbVClrXf5x9z/LHvzMvEk7diRQsaRUtH3vQklbAsloFS1pFy2oFLWkFLKtVsKRVt" +
+            "KxW0JJWwLJaBUtaRctqBa0X1+W43qGn25cAAAAASUVORK5CYII=";
 }
