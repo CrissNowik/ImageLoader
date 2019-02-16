@@ -12,9 +12,29 @@ function init() {
         "arch-left": "img/arch-left.png",
         "arch-right": "img/arch-right.png",
         "knight": "img/knight.png",
-        "axe": "img/axe.png"
-    }, onDone, onProgress);
+        "axe": "img/axe.png",
+        "sheet": "img/sheet.png"
+    }, onDone, onProgress, onLoaded);
 };
+/**
+ *onLoaded - function responsible for getting images from imageManager object and drawing received images by drawFrame public method
+ */
+function onLoaded() {
+    let canvas = initFullScreenCanvas("mainCanvas");
+    let ctx = canvas.getContext("2d");
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0,0, canvas.width, canvas.height);
+    let spriteSheet = new SpriteSheet(imageManager.get("sheet"), [
+        [0, 0, 94, 76, 44, 67],
+        [94, 0, 94, 76, 44, 68],
+        [188, 0, 91, 76, 42, 68],
+        [279, 0, 88, 76, 39, 68]
+    ]);
+
+    spriteSheet.drawFrame(ctx, 1, 200, 200);
+}
+
+setTimeout(onLoaded,2000);
 
 /****
  * onProgress - function responsible for informing about fail/success of loading each photo
@@ -70,18 +90,16 @@ function resizeCanvas(canvas) {
  * drawAxe() -  function responsible for drawing axe when loading occurs success
  */
 function drawKnight() {
-    const canvas = document.getElementById("mainCanvas");
-    const ctx = canvas.getContext("2d");
+    let canvas = initFullScreenCanvas("mainCanvas");
+    let ctx = canvas.getContext("2d");
     const knight = imageManager.get("knight");
-    ctx.drawImage(knight, 0, 0, 206, 208, 10, 10, 206, 208);
+    ctx.drawImage(knight, 0, 0, 206, 208, 300, 300, 206, 208);
 }
 
 /****
  * altImgBackup - function responsible for drawing alternative image when loading of some picture will error
  */
 function altImgBackup() {
-    const canvas = initFullScreenCanvas("mainCanvas");
-    const ctx = canvas.getContext("2d");
     const image = new Image();
 
     image.onload = function() {
