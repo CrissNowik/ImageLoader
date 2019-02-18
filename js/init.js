@@ -5,9 +5,10 @@ window.addEventListener('load', init);
  */
 let imageManager;
 let spriteSheet;
-let timer = 0;
 let frameStart = 0;
-let frame = 0;
+let animationStartTime = new Date().getTime();
+let numFrames = 15;
+let duration = numFrames*50;
 const tiles = [
     [0, 0, 94, 76, 44, 67],
     [94, 0, 94, 76, 44, 68],
@@ -47,25 +48,26 @@ function onLoaded() {
     let ctx = canvas.getContext("2d");
     spriteSheet = new SpriteSheet(imageManager.get("sheet"), tiles);
     console.log("Animation now!")
-    animate();
+    animate(0);
 }
-setTimeout(onLoaded,2000);
+setTimeout(onLoaded,5000);
 /**
  * animate - basic animation function
  */
 function animate(timestamp) {
     let canvas = initFullScreenCanvas("mainCanvas");
     let ctx = canvas.getContext("2d");
-    let now = new Date().getTime();
+
+    let now = timestamp || new Date().getTime();
     let passed = now - frameStart;
-    if (passed > 60) {
+    let timePassed = (now - animationStartTime)%duration;
+    let fraction = timePassed/duration;
+    let currentFrame = Math.abs(Math.floor(fraction*numFrames));
+    
         ctx.fillStyle = '#fff';
         ctx.fillRect(0,0, 500, 500);
-        frame = (frame + 1)%tiles.length; // increment frame number +1, but no bigger than tiles array length (current++ -- if current>4 ? current=0)
-        spriteSheet.drawFrame(ctx, frame, 200, 200);
-        frameStart = now;
-    }
-    requestAnimationFrame(arguments.callee);
+        spriteSheet.drawFrame(ctx, currentFrame, 200, 200);
+        requestAnimationFrame(arguments.callee);
 }
 
 /****
@@ -125,7 +127,7 @@ function drawKnight() {
     let canvas = initFullScreenCanvas("mainCanvas");
     let ctx = canvas.getContext("2d");
     const knight = imageManager.get("knight");
-    ctx.drawImage(knight, 0, 0, 206, 208, 300, 300, 206, 208);
+    ctx.drawImage(knight, 0, 0, 206, 208, 200, 200, 206, 208);
 }
 
 /****
@@ -144,3 +146,32 @@ function altImgBackup() {
             "KxW0JJWwLJaBUtaRctqBa0X1+W43qGn25cAAAAASUVORK5CYII=";
 }
 
+function isTouchDevice() {
+    return ('ontouchstart' in document.documentElement);
+}
+
+window.requestAnimationFrame = (function(){
+    // check all possible browsers
+    //@paul_irish function
+    return  window.requestAnimationFrame       ||  //Chromium
+        window.webkitRequestAnimationFrame ||  //Webkit
+        window.mozRequestAnimationFrame    || //Mozilla Geko
+        window.oRequestAnimationFrame      || //Opera Presto
+        window.msRequestAnimationFrame     || //IE Trident?
+        function(callback, element){ // Funkcja awaryjna
+            console.log("Funkcja awaryjna");
+            return window.setTimeout(callback, 1000/30);
+        }
+
+})();
+
+// and cancel animation in all possible browsersm
+
+window.cancelRequestAnimFrame = ( function() { 
+    return window.cancelAnimationFrame          ||
+        window.webkitCancelRequestAnimationFrame    ||
+        window.mozCancelRequestAnimationFrame       ||
+        window.oCancelRequestAnimationFrame     ||
+        window.msCancelRequestAnimationFrame        ||
+        clearTimeout
+} )();
