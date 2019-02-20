@@ -77,3 +77,51 @@ _p.getDuration = function() {
 	return this._duration;
 };
 
+/**
+ * Set time of single iteration of animation loop. Value <= 1
+ */
+_p.setDuration = function(duration) {
+	this._throwIfStarted();
+	if (duration < 1) {
+		throw "Time can't be < 1";
+	}
+	this._duration = duration;
+};
+
+/**
+ * Return number of animation repetitions  - default 1.
+ */
+_p.getRepeatCount = function() {
+	return this._repeatCount;
+};
+
+/**
+ * Set a number of animation loops - default 1. Never ending loop === Animator.INFINITE
+ */
+_p.setRepeatCount = function(repeatCount) {
+	this._throwIfStarted();
+
+	if (repeatCount < 1 && repeatCount != Animator.INFINITE)
+		throw "Number of repetitions should be > 0 or INFINITE.";
+	this._repeatCount = repeatCount;
+};
+
+/**
+ * Return way of animation repetiton.
+ * Possible values: Animator.RepeatBehavior.LOOP i Animator.RepeatBehavior.REPATE. 
+ */
+_p.getRepeatBehavior = function() {
+	return this._repeatBehavior;
+};
+
+/**
+ * Set way of repeating - default Animator.RepeatBehavior.LOOP
+ * @param behavior - new way of repeating
+ */
+_p.setRepeatBehavior = function(behavior) {
+	this._throwIfStarted();
+	if (behavior != Animator.RepeatBehavior.LOOP && behavior != Animator.RepeatBehavior.REVERSE) {
+		throw "Way of repeating should be RepeatBehavior.LOOP or RepeatBehavior.REVERSE";
+	}
+	this._repeatBehavior = behavior;
+};
