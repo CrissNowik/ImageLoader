@@ -125,3 +125,79 @@ _p.setRepeatBehavior = function(behavior) {
 	}
 	this._repeatBehavior = behavior;
 };
+
+/**
+ * returns value of acceleration.
+ */
+_p.getAcceleration = function() {
+	return this._acceleration;
+};
+
+/**
+ * Set  value of acceleration.
+ * @param acceleration new acceleration
+ */
+_p.setAcceleration = function(acceleration) {
+	this._throwIfStarted();
+	if (acceleration < 0 || acceleration > 1 || acceleration > (1 - this._deceleration)) {
+		throw "Acceleration must be between (0, 1) and can't be bigger than (1 - deceleration)";
+	}
+
+	this._acceleration = acceleration;
+};
+
+/**
+ * Return actual value of deceleration, default 0.
+ */
+_p.getDeceleration = function() {
+	return this._deceleration;
+};
+
+
+/**
+ * Set value of deceleration (0, 1-deceleration).
+ * @param acceleration new deceleration
+ */
+_p.setDeceleration = function(deceleration) {
+	this._throwIfStarted();
+	if (deceleration < 0 || deceleration > 1 || deceleration > (1 - this._acceleration)) {
+		throw "Deceleration should be between (0, 1) and can't be bigger than (1 - acceleration)";
+	}
+
+	this._deceleration = deceleration;
+};
+
+
+/**
+ * Default preprocessor takes only deceleration and acceleration
+ */
+_p._timingEventPreprocessor = function(fraction) {
+	return this._accelerationDecelerationPreprocessor(fraction);
+};
+
+/**
+ * Count fraction considering acceleration and deceleration
+ * More in SMIL 2.0
+ */
+_p._accelerationDecelerationPreprocessor = function(fraction) {
+	if (this._acceleration || this._deceleration) {
+		var runRate = 1/(1 - this._acceleration/2 - this._deceleration/2);
+		if (fraction < this._acceleration) {
+			fraction *= runRate * (fraction / this._acceleration) / 2;
+		} else if (fraction > (1 - this._deceleration)) {
+			var tdec = fraction - (1 - this._deceleration); //time during deceleration
+			var pdec  = tdec / this._deceleration; // tdec to summary deceleration time
+			fraction = runRate * (1 - ( this._acceleration / 2) -
+					this._deceleration + tdec * (2 - pdec) / 2);
+		} else {
+			fraction = runRate * (fraction - (this._acceleration / 2));
+		}
+		if (fraction < 0) {
+			fraction = 0;
+		} else if (fraction > 1) {
+			fraction = 1;
+		}
+	}
+
+	return fraction;
+};
