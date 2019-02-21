@@ -1,4 +1,7 @@
 /**
+ * Class inspired by https://github.com/akuhtz/timingframework and exercises materials from book "Profesjonalne tworzenie gier internetowych dla systemów Android" - J. Bura, P. Coates
+ * 
+ * 
  * Basic animation class
  * @param duration - miliseconds - time of animation single iteration eg. 6 frames, each 50 ms === 300 ms duration
  *
@@ -177,7 +180,7 @@ _p._timingEventPreprocessor = function(fraction) {
 
 /**
  * Count fraction considering acceleration and deceleration
- * More in SMIL 2.0
+ * More in https://www.w3.org/TR/SMIL2/
  */
 _p._accelerationDecelerationPreprocessor = function(fraction) {
 	if (this._acceleration || this._deceleration) {
